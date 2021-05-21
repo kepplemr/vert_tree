@@ -1,0 +1,65 @@
+version: 2.1
+references:
+  test_job: &test_job
+    test_python_version:
+      docker:
+        - image: python:<< parameters.python_version >>
+      parameters:
+        python_version:
+          description: "dub"
+          type: string
+      steps:
+        - checkout
+        - run:
+            name: Install tox
+            command: |
+              pip install --user tox
+              echo 'export PATH=~/.local/bin:$PATH' >> $BASH_ENV
+        - run:
+            name: echo version without dot
+            command: |
+              TOX_VERSION=py$(echo << parameters.python_version >> | tr -d .)
+              export TERM=linux
+              export TERMINFO=/etc/terminfo
+              tox -e $TOX_VERSION
+jobs:
+  style-check:
+    docker:
+      - image: python:3.7.6
+    steps:
+      - checkout
+      - run:
+          name: pre-commit install
+          command: pip install --progress-bar=off pre-commit
+      - run:
+          name: pre-commit run
+          command: pre-commit run -a
+  <<: *test_job
+workflows:
+  build_test_deploy:
+    jobs:
+      - style-check
+      - test_python_version:
+          python_version: "2.7"
+          requires:
+          - style-check
+      - test_python_version:
+          python_version: "3.5"
+          requires:
+          - style-check
+      - test_python_version:
+          python_version: "3.6"
+          requires:
+          - style-check
+      - test_python_version:
+          python_version: "3.7"
+          requires:
+          - style-check
+      - test_python_version:
+          python_version: "3.8"
+          requires:
+          - style-check
+      - test_python_version:
+          python_version: "3.9"
+          requires:
+          - style-check
