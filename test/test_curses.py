@@ -1,3 +1,4 @@
+import curses
 import unittest
 
 from util import *
@@ -52,6 +53,16 @@ class TestCurses(unittest.TestCase):
         assert self.display.pad.instr(3, 22, 1) == b"/"
         assert self.display.pad.instr(3, 26, 1) == b"\\"
         assert self.display.pad.instr(5, 3, 1) == b"/"
+
+    def test_tree_scroll(self):
+        # display needs to remain up long enough to register our right arrows
+        temp_display = CursesDisplay(1)
+        root = create_tree_3()
+        temp_display.display_vert_tree(root, 4)
+        assert curses.getsyx()[1] == 3
+        temp_display._get_pad_char = lambda: curses.KEY_RIGHT
+        temp_display.display_vert_tree(root, 4)
+        assert curses.getsyx()[1] == 0
 
     def test_random_trees(self):
         root = generate_random_tree(10)

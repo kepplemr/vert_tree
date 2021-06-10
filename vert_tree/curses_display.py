@@ -14,6 +14,7 @@ class CursesDisplay(BaseTreeDisplay):
         self.width = tree.total_width
         try:
             self.pad = curses.newpad(self.height, self.width)
+            self.pad.keypad(True)
         except:
             print("The curses lib cannot handle a tree so large! Height: {} width: {}".format(self.height, self.width))
             return False
@@ -22,7 +23,6 @@ class CursesDisplay(BaseTreeDisplay):
         return True
 
     def _display_curses_tree(self, stdscr, root, edge_spacing):
-        # TODO center on root?
         super(CursesDisplay, self).display_vert_tree(root, edge_spacing)
         if not hasattr(self, "pad"):
             return
@@ -31,17 +31,21 @@ class CursesDisplay(BaseTreeDisplay):
         while time.time() < time_end:
             win_height, win_width = stdscr.getmaxyx()
             self.pad.refresh(y, x, 0, 0, win_height - 1, win_width - 1)
-            char = self.pad.getch()
-            if char == ord("q"):
+            input_char = self._get_pad_char()
+            if input_char == ord("q"):
                 break
-            elif char == curses.KEY_UP:
+            elif input_char == curses.KEY_UP:
                 y = max(y - 1, 0)
-            elif char == curses.KEY_DOWN:
+            elif input_char == curses.KEY_DOWN:
                 y = min(y + 1, self.height - win_height)
-            elif char == curses.KEY_RIGHT:
-                x = min(x + 1, self.width - 1)
-            elif char == curses.KEY_LEFT:
+            elif input_char == curses.KEY_RIGHT:
+                x = min(x + 1, self.width - 2)
+            elif input_char == curses.KEY_LEFT:
                 x = max(x - 1, 0)
+
+    def _get_pad_char(self):
+        # used for simpler monkey patching in test
+        return self.pad.getch()
 
     def _get_end_time(self):
         if self.timeout >= 0:
