@@ -64,6 +64,11 @@ class TestCurses(unittest.TestCase):
         temp_display.display_vert_tree(root, 4)
         assert curses.getsyx()[1] == 0
 
+    def test_root_centering(self):
+        root = create_tree_4()
+        self.display.display_vert_tree(root, 4)
+        assert self.display.x != 0
+
     def test_random_trees(self):
         root = generate_random_tree(10)
         for _ in range(20):

@@ -8,13 +8,16 @@ from vert_tree.common import Edge
 class CursesDisplay(BaseTreeDisplay):
     def __init__(self, timeout=-1):
         self.timeout = timeout
+        self.x = self.y = 0
 
     def _init_display(self, tree):
         self.height = tree.vertical_length
         self.width = tree.total_width
+        self.root_pos = tree.left_width
         try:
             self.pad = curses.newpad(self.height, self.width)
             self.pad.keypad(True)
+            curses.curs_set(0)
         except:
             print("The curses lib cannot handle a tree so large! Height: {} width: {}".format(self.height, self.width))
             return False
@@ -26,22 +29,25 @@ class CursesDisplay(BaseTreeDisplay):
         super(CursesDisplay, self).display_vert_tree(root, edge_spacing)
         if not hasattr(self, "pad"):
             return
-        x = y = 0
+        _, win_width = stdscr.getmaxyx()
+        # center pad on root element
+        if win_width < self.width:
+            self.x = self.root_pos - int(win_width / 2)
         time_end = self._get_end_time()
         while time.time() < time_end:
             win_height, win_width = stdscr.getmaxyx()
-            self.pad.refresh(y, x, 0, 0, win_height - 1, win_width - 1)
+            self.pad.refresh(self.y, self.x, 0, 0, win_height - 1, win_width - 1)
             input_char = self._get_pad_char()
             if input_char == ord("q"):
                 break
             elif input_char == curses.KEY_UP:
-                y = max(y - 1, 0)
+                self.y = max(self.y - 1, 0)
             elif input_char == curses.KEY_DOWN:
-                y = min(y + 1, self.height - win_height)
+                self.y = min(self.y + 1, self.height - win_height)
             elif input_char == curses.KEY_RIGHT:
-                x = min(x + 1, self.width - 2)
+                self.x = min(self.x + 1, self.width - 2)
             elif input_char == curses.KEY_LEFT:
-                x = max(x - 1, 0)
+                self.x = max(self.x - 1, 0)
 
     def _get_pad_char(self):
         # used for simpler monkey patching in test
