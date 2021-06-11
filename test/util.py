@@ -67,6 +67,15 @@ def create_tree_3(add_left=True):
     return root
 
 
+def create_tree_4():
+    root = create_tree_3()
+    root.left.left.left.left = TreeNode("i")
+    root.left.left.left.left.left = TreeNode("j")
+    root.left.left.left.left.left.left = TreeNode("k")
+    root.left.left.left.left.left.left.left = TreeNode("l")
+    return root
+
+
 @contextmanager
 def captured_output():
     new_out, new_err = StringIO(), StringIO()
