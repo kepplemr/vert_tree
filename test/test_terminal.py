@@ -58,3 +58,11 @@ class TestTerminal(unittest.TestCase):
         assert output[3][22] == "/"
         assert output[3][26] == "\\"
         assert output[5][3] == "/"
+
+    def test_too_large_tree(self):
+        temp_display = TerminalDisplay()
+        root = generate_random_tree(20)
+        with captured_output() as (stdout, stderr):
+            temp_display.display_vert_tree(root, 4)
+            output = stdout.getvalue().splitlines()
+        assert output[0][:20] == "Error: tree width is"
