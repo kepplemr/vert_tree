@@ -8,6 +8,7 @@ from vert_tree.common import Edge
 
 class TerminalDisplay(BaseTreeDisplay):
     def __init__(self, test_terminal_width=True):
+        self.function = self._base_display_tree
         self.test_terminal_width = test_terminal_width
 
     def _init_display(self, tree):
