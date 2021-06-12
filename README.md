@@ -89,69 +89,37 @@ in the above case the curses window will exit automatically after 5 seconds.
 some trees with considerable depth may take up a lot of space if we print consistent edge lines. For example:
 
 ```bash
-                                                       Ragnar
-                                                         / \
-                                                        /   \
-                                                       /     \
-                                                      /       \
-                                                     /         \
-                                                    /           \
-                                                   /             \
-                                                  /               \
-                                                 /                 \
-                                                /                   \
-                                               /                     \
-                                              /                       \
-                                             /                         \
-                                            /                           \
-                                           /                             \
-                                          /                               \
-                                         /                                 \
-                                        /                                   \
-                                       /                                     \
-                                      /                                       \
-                                     /                                         \
-                                    /                                           \
-                                   /                                             \
-                                  /                                               \
-                                 /                                                 \
-                                /                                                   \
-                               /                                                     \
-                              /                                                       \
-                             /                                                         \
-                            /                                                           \
-                           /                                                             \
-                      Lagertha                                                          Floki
-                         / \                                                             / \
-                        /   \                                                           /   \
-                       /     \                                                         /     \
-                      /       \                                                       /       \
-                     /         \                                                     /         \
-                    /           \                                                   /           \
-                   /             \                                                 /             \
-                  /               \                                               /               \
-                 /                 \                                             /                 \
-                /                   \                                           /                   \
-               /                     \                                         /                     \
-              /                       \                                       /                       \
-             /                         \                                     /                         \
-            /                           \                                   /                           \
-           /                             \                                 /                             \
-        Rollo                           Bjorn                         Gunnhild                          Ubbe
-         /                                                                                               /
-        /                                                                                               /
-       /                                                                                               /
-      /                                                                                               /
-     /                                                                                               /
-    /                                                                                               /
-   /                                                                                               /
-Harald                                                                                          Ivar
-                                                                                                   \
-                                                                                                    \
-                                                                                                     \
-                                                                                                  Hvitserk
-                                                                                                     /
-                                                                                                Torstein
+                        SnCKkZLvPBMe
+                             / \
+                            /   \
+                           /     \
+                          /       \
+                         /         \
+                        /           \
+                       /             \
+                      /               \
+                     /                 \
+                    /                   \
+                   /                     \
+                  /                       \
+                 /                         \
+                /                           \
+               /                             \
+     ajjUMZsoDBUgCsWpwW                bjnIUXLjqqWHQS
+             / \                             / \
+            /   \                           /   \
+           /     \                         /     \
+          /       \                       /       \
+         /         \                     /         \
+        /           \                   /           \
+       /             \                 /             \
+    hKqi     lKPwIcaDXsPtwlruMAX   oxKHLI           MHdg
+     /                                 \
+    /                                   \
+   /                                     \
+dENnQtEJbRNCWxmJmgnM                     QyF
+                                           \
+                                      PjhmeuYPGZRyf
 ```
 
 by passing the arrow_spacing argument to either Terminal or Curses Displays, we can eliminate some of the depth by
@@ -163,25 +131,17 @@ terminal.display_vert_tree(root, arrow_spacing=4)
 ```
 output:
 ```bash
-                                                       Ragnar
-                                                      /       \
-                                                  /               \
-                                              /                       \
-                                          /                               \
-                                      /                                       \
-                                  /                                               \
-                              /                                                       \
-                      Lagertha                                                          Floki
-                      /       \                                                       /       \
-                  /               \                                               /               \
-              /                       \                                       /                       \
-        Rollo                           Bjorn                         Gunnhild                          Ubbe
-      /                                                                                               /
-Harald                                                                                          Ivar
-                                                                                                    \
-                                                                                                  Hvitserk
-                                                                                                     /
-                                                                                                Torstein
+                        SnCKkZLvPBMe
+                          /       \
+                      /               \
+                  /                       \
+     ajjUMZsoDBUgCsWpwW                bjnIUXLjqqWHQS
+          /       \                       /       \
+    hKqi     lKPwIcaDXsPtwlruMAX   oxKHLI           MHdg
+    /                                   \
+dENnQtEJbRNCWxmJmgnM                     QyF
+                                           \
+                                      PjhmeuYPGZRyf
 ```
 # limitations
 
