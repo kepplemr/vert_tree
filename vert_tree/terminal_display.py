@@ -2,12 +2,13 @@ from __future__ import unicode_literals
 
 import subprocess
 
-from vert_tree.base import BaseTreeDisplay
+from vert_tree.base import BaseTreeDisplay, TreeDisplayError
 from vert_tree.common import Edge
 
 
 class TerminalDisplay(BaseTreeDisplay):
     def __init__(self, test_terminal_width=True):
+        self.function = self._base_display_tree
         self.test_terminal_width = test_terminal_width
 
     def _init_display(self, tree):
@@ -15,9 +16,9 @@ class TerminalDisplay(BaseTreeDisplay):
             # support python 2/3
             terminal_width = int(subprocess.check_output(["stty", "size"]).split()[0])
             if tree.total_width > terminal_width:
-                print("Error: tree width is {}, terminal width is {}".format(tree.total_width, terminal_width))
-                return False
-        return True
+                raise TreeDisplayError(
+                    "Error: tree width is {}, terminal width is {}".format(tree.total_width, terminal_width)
+                )
 
     def _print_vertices(self, level_verts, width):
         self._truncate_node_vals(level_verts)

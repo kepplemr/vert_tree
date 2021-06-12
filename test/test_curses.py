@@ -69,6 +69,13 @@ class TestCurses(unittest.TestCase):
         self.display.display_vert_tree(root, 4)
         assert self.display.x != 0
 
+    def test_too_large_tree(self):
+        root = generate_random_tree(20)
+        with captured_output() as (stdout, stderr):
+            self.display.display_vert_tree(root)
+            output = stdout.getvalue().splitlines()
+        assert output[0][:45] == "The curses lib cannot handle a tree so large!"
+
     def test_random_trees(self):
         root = generate_random_tree(10)
         for _ in range(20):

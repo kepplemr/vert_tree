@@ -1,7 +1,8 @@
 import curses
 import time
+from functools import partial
 
-from vert_tree.base import BaseTreeDisplay
+from vert_tree.base import BaseTreeDisplay, TreeDisplayError
 from vert_tree.common import Edge
 
 
@@ -9,6 +10,7 @@ class CursesDisplay(BaseTreeDisplay):
     def __init__(self, timeout=-1):
         self.timeout = timeout
         self.x = self.y = 0
+        self.function = partial(curses.wrapper, self._display_curses_tree)
 
     def _init_display(self, tree):
         self.height = tree.vertical_length
@@ -19,16 +21,14 @@ class CursesDisplay(BaseTreeDisplay):
             self.pad.keypad(True)
             curses.curs_set(0)
         except:
-            print("The curses lib cannot handle a tree so large! Height: {} width: {}".format(self.height, self.width))
-            return False
+            raise TreeDisplayError(
+                "The curses lib cannot handle a tree so large! Height: {} width: {}".format(self.height, self.width)
+            )
         # curses reads will block for only this time amount in millis
         self.pad.timeout(500)
-        return True
 
     def _display_curses_tree(self, stdscr, root, edge_spacing):
-        super(CursesDisplay, self).display_vert_tree(root, edge_spacing)
-        if not hasattr(self, "pad"):
-            return
+        super(CursesDisplay, self)._base_display_tree(root, edge_spacing)
         _, win_width = stdscr.getmaxyx()
         # center pad on root element
         if win_width < self.width:
@@ -57,9 +57,6 @@ class CursesDisplay(BaseTreeDisplay):
         if self.timeout >= 0:
             return time.time() + self.timeout
         return float("inf")
-
-    def display_vert_tree(self, root, edge_spacing=1):
-        curses.wrapper(self._display_curses_tree, root, edge_spacing)
 
     def _print_edges(self, level_edges, level, width, edge_spacing, lines_required):
         if not level_edges:

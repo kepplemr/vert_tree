@@ -5,6 +5,10 @@ import six
 from vert_tree.common import Edge, Tree, Vertex
 
 
+class TreeDisplayError(Exception):
+    pass
+
+
 @six.add_metaclass(abc.ABCMeta)
 class BaseTreeDisplay:
     @abc.abstractmethod
@@ -20,30 +24,39 @@ class BaseTreeDisplay:
         pass
 
     def display_vert_tree(self, root, edge_spacing=1):
+        # we don't want to take down the user program if something goes wrong
+        try:
+            self.function(root, edge_spacing)
+        except TreeDisplayError as cde:
+            print(cde)
+
+    def _base_display_tree(self, root, edge_spacing=1):
+        if root is None:
+            raise TreeDisplayError("Error: no tree to display")
+        # ensure edge spacing is a power of 2
+        if not ((edge_spacing != 0) and (edge_spacing & (edge_spacing - 1) == 0)):
+            raise TreeDisplayError("Error: edge spacing must be a power of two")
         tree = Tree(root, edge_spacing)
-        if not self._init_display(tree):
-            return
+        self._init_display(tree)
         current_level, next_level = deque(), deque()
         distance_from_top, level_verts, level_edges = 0, [], []
         current_level.append(Vertex(root, distance_from_top, tree.left_width, tree.depth - 1, tree.total_width))
         while current_level:
-            curr = current_level.popleft()
-            level_verts.append(curr)
-            next_edge_len = Edge.get_edge_length(curr.levels_below, edge_spacing)
+            cur = current_level.popleft()
+            level_verts.append(cur)
+            next_edge_len = Edge.get_edge_length(cur.levels_below, edge_spacing)
             child_dis = distance_from_top + next_edge_len + 1
-            if curr.node.left:
-                child_pos = curr.position_from_left - pow(2, curr.levels_below)
-                next_level.append(Vertex(curr.node.left, child_dis, child_pos, curr.levels_below - 1, tree.total_width))
-                level_edges.append(Edge(distance_from_top + 1, curr.position_from_left, child_pos, "/"))
-            if curr.node.right:
-                child_pos = curr.position_from_left + pow(2, curr.levels_below)
-                next_level.append(
-                    Vertex(curr.node.right, child_dis, child_pos, curr.levels_below - 1, tree.total_width)
-                )
-                level_edges.append(Edge(distance_from_top + 1, curr.position_from_left, child_pos, chr(92)))
+            if cur.node.left:
+                child_pos = cur.position_from_left - pow(2, cur.levels_below)
+                next_level.append(Vertex(cur.node.left, child_dis, child_pos, cur.levels_below - 1, tree.total_width))
+                level_edges.append(Edge(distance_from_top + 1, cur.position_from_left, child_pos, "/"))
+            if cur.node.right:
+                child_pos = cur.position_from_left + pow(2, cur.levels_below)
+                next_level.append(Vertex(cur.node.right, child_dis, child_pos, cur.levels_below - 1, tree.total_width))
+                level_edges.append(Edge(distance_from_top + 1, cur.position_from_left, child_pos, chr(92)))
             if not current_level:
                 self._print_vertices(level_verts, tree.total_width)
-                self._print_edges(level_edges, curr.levels_below, tree.total_width, edge_spacing, next_edge_len)
+                self._print_edges(level_edges, cur.levels_below, tree.total_width, edge_spacing, next_edge_len)
                 distance_from_top += next_edge_len + 1
                 level_edges, level_verts = [], []
                 current_level = next_level
